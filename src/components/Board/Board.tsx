@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, Form, Input, Typography, Button, Flex } from 'antd';
+import { List, Form, Input, Button, Flex } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
 import * as styles from '../componentsStyles';
 import Task from '../Task/Task';
@@ -16,7 +16,6 @@ export interface ITask {
 interface BoardProps {
   tasks: ITask[];
 }
-const { Text } = Typography;
 
 const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
   const [listOpened, setListOpened] = useState(true);
