@@ -21,7 +21,7 @@ const Task: React.FC<TaskProps> = ({ item, onToggleDone }) => {
   };
 
   return (
-    <Flex justify='flex-start' align='flex-start'>
+    <Flex justify='flex-start' align='center'>
       <Button
         shape='circle'
         onClick={onChangeDone}
