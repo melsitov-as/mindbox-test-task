@@ -25,7 +25,10 @@ const Task: React.FC<TaskProps> = ({ item, onToggleDone }) => {
       <Button
         shape='circle'
         onClick={onChangeDone}
-        icon={done && <CheckOutlined />}
+        style={{ border: `${done ? '1px solid cadetblue' : ''}` }}
+        icon={
+          done && <CheckOutlined style={{ color: `${done ? 'green' : ''}` }} />
+        }
       />
       <Text
         style={{
