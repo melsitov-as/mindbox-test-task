@@ -23,6 +23,9 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
   const [filterType, setFilterType] = useState('all');
   const [filteredTasks, setFilteredTasks] = useState<ITask[]>(defaultTasks);
   const [inputValue, setInputValue] = useState('');
+  const [itemsLeft, setItemsLeft] = useState(
+    defaultTasks.filter((task: ITask) => !task.done).length
+  );
 
   const handleListOpened = () => setListOpened(!listOpened);
 
@@ -72,6 +75,7 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
 
   useEffect(() => {
     filterTasks(filterType);
+    setItemsLeft(defaultTasks.filter((task: ITask) => !task.done).length);
   }, [filterType, defaultTasks]);
   return (
     <>
@@ -114,7 +118,9 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
             justify={'flex-start'}
             style={{ width: '100%' }}
           >
-            <span>2 items left</span>
+            <span>
+              {itemsLeft} {`${itemsLeft === 1 ? 'item' : 'items'}`} left
+            </span>
             <Button
               id='all'
               style={{ marginLeft: '15px' }}
