@@ -21,7 +21,6 @@ export const inputStyles: GenericStyle = {
 };
 
 export const boardTextStyles: GenericStyle = {
-  // paddingTop: '6px',
   marginLeft: '20px',
   width: '500px',
   fontFamily: 'Arial, sans-serif',
