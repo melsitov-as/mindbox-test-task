@@ -123,6 +123,7 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
             </span>
             <Button
               id='all'
+              type={`${filterType === 'all' ? 'default' : 'text'}`}
               style={{ marginLeft: '15px' }}
               onClick={() => handleFilterType('all')}
             >
@@ -130,7 +131,7 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
             </Button>
             <Button
               id='active'
-              type={'text'}
+              type={`${filterType === 'active' ? 'default' : 'text'}`}
               style={{ marginLeft: '15px' }}
               onClick={() => handleFilterType('active')}
             >
@@ -138,7 +139,7 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
             </Button>
             <Button
               id='completed'
-              type={'text'}
+              type={`${filterType === 'completed' ? 'default' : 'text'}`}
               style={{ marginLeft: '15px' }}
               onClick={() => handleFilterType('completed')}
             >
