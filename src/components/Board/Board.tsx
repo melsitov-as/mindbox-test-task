@@ -80,6 +80,16 @@ const Board: React.FC<BoardProps> = ({ tasks: initialTasks }) => {
   }, [filterType, defaultTasks]);
   return (
     <>
+      {/* <div>
+        {initialTasks.map((item) => (
+          <Task
+            data-testid={item.title}
+            key={item.id}
+            item={item}
+            onToggleDone={updateTaskStatus}
+          />
+        ))}
+      </div> */}
       <List
         bordered
         style={{ background: '#ffffff' }}

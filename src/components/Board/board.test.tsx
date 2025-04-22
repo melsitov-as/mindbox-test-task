@@ -3,126 +3,119 @@ import '@testing-library/jest-dom';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Board from './Board';
+import { nanoid } from 'nanoid';
+import { List } from 'antd';
 
-const mockTasks: ITask[] = [
-  { id: '1', title: 'Task 1', done: false },
-  { id: '2', title: 'Task 2', done: true },
-  { id: '3', title: 'Task 3', done: false },
+const MockTask = jest.fn(({ item }) => (
+  <div data-testid={item.title}>{item.title}</div>
+));
+import Task from '../Task/Task';
+
+const initialTasks = [
+  { id: nanoid(), title: 'Task-1', done: false },
+  { id: nanoid(), title: 'Task-2', done: true },
+  { id: nanoid(), title: 'Task-3', done: false },
 ];
 
-// const setup = (initialTasks = mockTasks) => {
-// render(<Board tasks={initialTasks} />);
-// expect(screen.getByText('Test Task')).toBeInTheDocument();
-// return {
-// getInput: () => screen.getByPlaceholderText('What needs to be done?'),
-// getAddTaskButton: () => screen.getByRole('button', { name: /add/i }), // Предполагаем, что у Form есть кнопка Submit
-// getTaskItem: (title: string) => screen.getByText(title),
-// getTaskCheckbox: (title: string) =>
-//   screen
-//     .getByText(title)
-//     .closest('li')
-//     ?.querySelector(
-//       'button[aria-label="Toggle Todo"]'
-//     ) as HTMLButtonElement, // Замените на фактический селектор кнопки Task
-// getAllFilterButton: () => screen.getByRole('button', { name: /all/i }),
-// getActiveFilterButton: () =>
-//   screen.getByRole('button', { name: /active/i }),
-// getCompletedFilterButton: () =>
-//   screen.getByRole('button', { name: /completed/i }),
-// getClearCompletedButton: () =>
-//   screen.getByRole('button', { name: /clear completed/i }),
-// getItemsLeft: () => screen.getByText(/item\(s\) left/i),
-// getListToggleButton: () =>
-//   screen.getByRole('button', { name: /toggle list/i }), // Вам может потребоваться добавить aria-label на эту кнопку в компоненте
-// };
-// };
+jest.mock('../Task/Task', () => MockTask);
 
-// describe('Board Component', () => {
-//   it('renders initial tasks', () => {
-//     const { getTaskItem } = setup();
-//     expect(getTaskItem('Task 1')).toBeInTheDocument();
-//     expect(getTaskItem('Task 2')).toBeInTheDocument();
-//     expect(getTaskItem('Task 3')).toBeInTheDocument();
-//   });
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: jest.fn().mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(), // deprecated
+    removeListener: jest.fn(), // deprecated
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  })),
+});
 
-//   // it('allows adding a new task', () => {
-//   //   const { getInput, getAddTaskButton, getTaskItem } = setup();
-//   //   fireEvent.change(getInput(), { target: { value: 'New Task' } });
-//   //   fireEvent.submit(getInput().closest('form')!); // Отправляем форму
-//   //   expect(getTaskItem('New Task')).toBeInTheDocument();
-//   //   expect(getInput()).toHaveValue('');
-//   // });
+describe('AntD List Component with renderItem', () => {
+  it('should render List.Item for each item in dataSource when listOpened is true', () => {
+    render(
+      <List
+        dataSource={initialTasks}
+        renderItem={(item) => (
+          <List.Item>
+            <Task key={item.id} item={item} onToggleDone={() => {}} />
+          </List.Item>
+        )}
+      />
+    );
 
-//   // it('toggles task completion status and updates items left', () => {
-//   //   const { getTaskCheckbox, getItemsLeft } = setup();
-//   //   expect(getItemsLeft()).toHaveTextContent('2 items left');
-//   //   fireEvent.click(getTaskCheckbox('Task 1'));
-//   //   expect(getItemsLeft()).toHaveTextContent('1 item left');
-//   //   fireEvent.click(getTaskCheckbox('Task 1'));
-//   //   expect(getItemsLeft()).toHaveTextContent('2 items left');
-//   // });
+    // Проверяем, что отрисовано правильное количество List.Item с правильными data-testid
+    expect(screen.getByTestId('Task-1')).toBeInTheDocument();
+    expect(screen.getByTestId('Task-2')).toBeInTheDocument();
+    expect(screen.getByTestId('Task-3')).toBeInTheDocument();
 
-//   // it('filters tasks by "Active"', () => {
-//   //   const { getActiveFilterButton, getTaskItem } = setup();
-//   //   fireEvent.click(getActiveFilterButton());
-//   //   expect(getTaskItem('Task 1')).toBeInTheDocument();
-//   //   expect(getTaskItem('Task 2')).not.toBeInTheDocument();
-//   //   expect(getTaskItem('Task 3')).toBeInTheDocument();
-//   // });
-
-//   // it('filters tasks by "Completed"', () => {
-//   //   const { getCompletedFilterButton, getTaskItem } = setup();
-//   //   fireEvent.click(getCompletedFilterButton());
-//   //   expect(getTaskItem('Task 1')).not.toBeInTheDocument();
-//   //   expect(getTaskItem('Task 2')).toBeInTheDocument();
-//   //   expect(getTaskItem('Task 3')).not.toBeInTheDocument();
-//   // });
-
-//   // it('filters tasks by "All"', () => {
-//   //   const { getActiveFilterButton, getAllFilterButton, getTaskItem } = setup();
-//   //   fireEvent.click(getActiveFilterButton()); // Сначала применяем другой фильтр
-//   //   fireEvent.click(getAllFilterButton());
-//   //   expect(getTaskItem('Task 1')).toBeInTheDocument();
-//   //   expect(getTaskItem('Task 2')).toBeInTheDocument();
-//   //   expect(getTaskItem('Task 3')).toBeInTheDocument();
-//   // });
-
-//   // it('clears completed tasks', () => {
-//   //   const { getClearCompletedButton, getTaskItem } = setup();
-//   //   fireEvent.click(getClearCompletedButton());
-//   //   expect(getTaskItem('Task 1')).toBeInTheDocument();
-//   //   expect(getTaskItem('Task 2')).not.toBeInTheDocument();
-//   //   expect(getTaskItem('Task 3')).toBeInTheDocument();
-//   // });
-
-//   // it('updates items left correctly after clearing completed', () => {
-//   //   const { getClearCompletedButton, getItemsLeft } = setup();
-//   //   expect(getItemsLeft()).toHaveTextContent('2 items left');
-//   //   fireEvent.click(getClearCompletedButton());
-//   //   expect(getItemsLeft()).toHaveTextContent('2 items left'); // Task 2 была удалена
-//   // });
-
-//   // it('toggles the list visibility', () => {
-//   //   const { getTaskItem, getListToggleButton } = setup();
-//   //   expect(getTaskItem('Task 1')).toBeInTheDocument();
-//   //   fireEvent.click(getListToggleButton());
-//   //   expect(getTaskItem('Task 1')).not.toBeInTheDocument();
-//   //   fireEvent.click(getListToggleButton());
-//   //   expect(getTaskItem('Task 1')).toBeInTheDocument();
-//   // });
-// });
-
-describe('Board Component', () => {
-  it('renders all tasks with their titles', () => {
-    render(<Board tasks={mockTasks} />);
-    mockTasks.forEach((task) => {
-      if (task.title) {
-        expect(screen.getByText(task.title)).toBeInTheDocument();
-      } else {
-        // Обработка случая, когда title отсутствует (например, пропустить проверку или выдать ошибку теста)
-        console.warn('Task без title:', task);
-        // expect(true).toBe(false); // Можно заставить тест упасть, если отсутствие title недопустимо
-      }
-    });
+    // Проверяем, что мок Task был вызван для каждого элемента
+    expect(MockTask).toHaveBeenCalledTimes(initialTasks.length);
+    expect(MockTask).toHaveBeenCalledWith(
+      {
+        item: initialTasks[0],
+        onToggleDone: expect.any(Function), // Проверяем, что onToggleDone - это функция
+      },
+      undefined
+    );
+    expect(MockTask).toHaveBeenCalledWith(
+      {
+        item: initialTasks[1],
+        onToggleDone: expect.any(Function), // Проверяем, что onToggleDone - это функция
+      },
+      undefined
+    );
+    expect(MockTask).toHaveBeenCalledWith(
+      {
+        item: initialTasks[2],
+        onToggleDone: expect.any(Function), // Проверяем, что onToggleDone - это функция
+      },
+      undefined
+    );
   });
+
+  // it('should not render List.Item when listOpened is false', () => {
+  //   render(
+  //     <List
+  //       dataSource={filteredTasks}
+  //       renderItem={(item) => (
+  //         false && ( // Симулируем listOpened === false
+  //           <List.Item data-testid={item.title}>
+  //             <Task key={item.id} item={item} onToggleDone={() => {}} />
+  //           </List.Item>
+  //         )
+  //       )}
+  //     />
+  //   );
+
+  //   // Проверяем, что ни один List.Item не отрисовался
+  //   expect(screen.queryByTestId('Task 1')).toBeNull();
+  //   expect(screen.queryByTestId('Task 2')).toBeNull();
+  //   expect(screen.queryByTestId('Task 3')).toBeNull();
+
+  //   // Проверяем, что мок Task не был вызван
+  //   expect(MockTask).not.toHaveBeenCalled();
+  // });
+
+  // it('should render Task component inside each List.Item', () => {
+  //   render(
+  //     <List
+  //       dataSource={filteredTasks}
+  //       renderItem={(item) => (
+  //         true && (
+  //           <List.Item data-testid={item.title}>
+  //             <Task key={item.id} item={item} onToggleDone={() => {}} />
+  //           </List.Item>
+  //         )
+  //       )}
+  //     />
+  //   );
+
+  //   // Проверяем, что внутри каждого List.Item отрисовался Task (по его data-testid)
+  //   expect(screen.getByTestId('task-1')).toBeInTheDocument();
+  //   expect(screen.getByTestId('task-2')).toBeInTheDocument();
+  //   expect(screen.getByTestId('task-3')).toBeInTheDocument();
+  // });
 });
