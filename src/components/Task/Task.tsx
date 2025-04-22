@@ -40,8 +40,14 @@ const Task: React.FC<TaskProps> = ({ item, onToggleDone }) => {
           borderColor: `${isHovered ? '#4096ff' : ''}`,
           background: '#ffffff',
         }}
+        data-testid={'circle'}
         icon={
-          done && <CheckOutlined style={{ color: `${done ? 'green' : ''}` }} />
+          done && (
+            <CheckOutlined
+              style={{ color: `${done ? 'green' : ''}` }}
+              data-testid={'check-outlined'}
+            />
+          )
         }
       />
       <Text

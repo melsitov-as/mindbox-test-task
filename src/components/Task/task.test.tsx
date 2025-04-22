@@ -1,11 +1,10 @@
+import { ITask } from '../../interfaces/interfaces';
 import '@testing-library/jest-dom';
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-// import { mockTask } from '../../mocks/tasks';
 import Task from './Task';
-import { ITask } from '../../interfaces/interfaces';
 
-export let mockTask = {
+export const mockTask: ITask = {
   id: '1',
   title: 'Test Task',
   done: false,
@@ -136,7 +135,7 @@ describe('Task Component', () => {
     const buttonElement = screen.getByRole('button');
     fireEvent.mouseOver(buttonElement);
     fireEvent.mouseOut(buttonElement);
-    expect(buttonElement).toHaveStyle('border-color: ;'); // Ожидаем пустую строку, так как задача не выполнена
+    expect(buttonElement).toHaveStyle('border-color: #d9d9d9'); // Ожидаем пустую строку, так как задача не выполнена
   });
 
   it('при наведении на кнопку, меняется цвет текста иконки (если есть)', () => {
