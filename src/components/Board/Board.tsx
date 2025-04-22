@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { nanoid } from 'nanoid';
 import { List, Form, Input, Button, Flex } from 'antd';
 import { DownOutlined } from '@ant-design/icons';
+
 import * as styles from '../componentsStyles';
 import Task from '../Task/Task';
-import { nanoid } from 'nanoid';
 
 type HandleType = (id: string) => void;
 
